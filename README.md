@@ -6,23 +6,6 @@ A macOS-style horizontal app switcher for the [COSMIC desktop](https://system76.
 
 ---
 
-## What it looks like
-
-```
-┌────────────────────────────────────────────────────┐
-│  ╔══════╗                                          │
-│  ║  󰈹  ║   󰻞     󰆍     󰙯     󰎙               │
-│  ╚══════╝                                          │
-└────────────────────────────────────────────────────┘
-```
-
-- Always-dark frosted pill, centered on screen
-- All icons the same size — selected app gets a soft white highlight box
-- Works with both Super+Tab and Alt+Tab
-- Activates the selected window on modifier release; Escape cancels
-
----
-
 ## Install
 
 **One-line (no Rust required):**
