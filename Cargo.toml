@@ -8,7 +8,7 @@ name = "cosmic-app-switcher"
 path = "src/main.rs"
 
 [dependencies]
-libcosmic = { git = "https://github.com/pop-os/libcosmic", default-features = false, features = [
+libcosmic = { git = "https://github.com/pop-os/libcosmic", rev = "417923f", default-features = false, features = [
     "wayland",
     "tokio",
     "winit",
@@ -26,3 +26,9 @@ clap       = { version = "4", features = ["derive"] }
 anyhow     = "1"
 log        = "0.4"
 env_logger = "0.11"
+
+[profile.release]
+strip     = true
+opt-level = "z"
+lto       = true
+codegen-units = 1

@@ -12,41 +12,52 @@ A macOS-style horizontal app switcher for the [COSMIC desktop](https://system76.
 ┌────────────────────────────────────────────────────┐
 │  ╔══════╗                                          │
 │  ║  󰈹  ║   󰻞     󰆍     󰙯     󰎙               │
-│  ║Firefox║                                          │
 │  ╚══════╝                                          │
 └────────────────────────────────────────────────────┘
 ```
 
-- Dark frosted pill, always — regardless of system theme
-- Icons only for unfocused apps; selected app gets a white highlight ring and a label
-- Cycles forward with Super+Tab, backward with Super+Shift+Tab
-- Activates the selected window on Super release; Escape cancels
-
----
-
-## Requirements
-
-- Pop!_OS with COSMIC desktop (cosmic-comp)
-- Rust toolchain (`rustup`)
-- `libxkbcommon-dev`
-
-```bash
-sudo apt install libxkbcommon-dev
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-source ~/.cargo/env
-```
+- Always-dark frosted pill, centered on screen
+- All icons the same size — selected app gets a soft white highlight box
+- Works with both Super+Tab and Alt+Tab
+- Activates the selected window on modifier release; Escape cancels
 
 ---
 
 ## Install
 
+**One-line (no Rust required):**
+
 ```bash
-git clone https://github.com/yourusername/cosmic-app-switcher
+curl -fsSL https://raw.githubusercontent.com/OWNER/cosmic-app-switcher/main/install.sh | bash
+```
+
+**Or build from source:**
+
+```bash
+# Install dependencies (one-time)
+sudo apt install libxkbcommon-dev
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && source ~/.cargo/env
+
+git clone https://github.com/OWNER/cosmic-app-switcher
 cd cosmic-app-switcher
 make install
 ```
 
-This builds the binary, installs it to `~/.local/bin/`, and registers it as the COSMIC window switcher. Changes take effect immediately — no logout required.
+Changes take effect immediately — no logout required.
+
+---
+
+## Uninstall
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/OWNER/cosmic-app-switcher/main/uninstall.sh | bash
+```
+
+Or from the project directory:
+
+```bash
+make uninstall
+```
 
 ---
 
@@ -54,9 +65,9 @@ This builds the binary, installs it to `~/.local/bin/`, and registers it as the 
 
 | Shortcut | Action |
 |---|---|
-| Super+Tab | Open switcher / cycle forward |
-| Super+Shift+Tab | Cycle backward |
-| Super (release) | Activate selected window |
+| Super+Tab / Alt+Tab | Open switcher / cycle forward |
+| Super+Shift+Tab / Alt+Shift+Tab | Cycle backward |
+| Modifier release | Activate selected window |
 | Escape | Cancel — return to original window |
 | Click icon | Select |
 | Release click | Activate |
@@ -66,50 +77,24 @@ This builds the binary, installs it to `~/.local/bin/`, and registers it as the 
 ## Enable / Disable
 
 ```bash
-make enable    # register as COSMIC window switcher (live reload)
-make disable   # remove — restores COSMIC's default switcher
-make status    # show current state
+make enable         # register as COSMIC window switcher (live reload)
+make disable        # remove — restores COSMIC's default switcher
+make status         # show current state
+make check-compat   # verify COSMIC environment is compatible
 ```
-
-Disabling is instant and reversible. The binary stays installed.
-
----
-
-## Uninstall
-
-```bash
-make uninstall
-```
-
-Removes the binary and restores the default COSMIC switcher.
 
 ---
 
 ## How it works
 
-COSMIC's compositor (`cosmic-comp`) lets you override the `WindowSwitcher` action by pointing a config file at any binary:
+COSMIC's compositor (`cosmic-comp`) lets you override the `WindowSwitcher` action by pointing a config file at any binary. The scripts detect the config path automatically — if COSMIC updates and moves to a new config version, it still works.
 
-```
-~/.config/cosmic/com.system76.CosmicSettings.Shortcuts/v1/system_actions
-```
-
-Each Super+Tab press launches the binary fresh. The first invocation creates a layer-shell overlay and binds a Unix socket. Subsequent presses (while Super is held) connect to that socket and send a `next`/`prev` signal — the running instance advances the selection and re-renders. Super release triggers window activation via `zcosmic_toplevel_manager_v1`.
+Each key press launches the binary fresh. The first invocation creates a layer-shell overlay and binds a Unix socket. Subsequent presses (while the modifier is held) connect to that socket and send a `next`/`prev` signal — the running instance advances the selection and re-renders. Releasing the modifier triggers window activation via `zcosmic_toplevel_manager_v1`.
 
 **Wayland protocols used:**
 - `zcosmic_toplevel_info_v1` — enumerate open windows
 - `zcosmic_toplevel_manager_v1` — activate a window
 - `zwlr_layer_shell_v1` — overlay surface centered on screen
-
----
-
-## Build from source
-
-```bash
-cargo build --release
-# binary at target/release/cosmic-app-switcher
-```
-
-First build takes a few minutes — libcosmic compiles from source. Subsequent builds are incremental.
 
 ---
 
@@ -123,10 +108,36 @@ src/
   wayland.rs   # background thread: enumerate toplevels, activate window
   icons.rs     # app_id → icon name via .desktop file lookup
 scripts/
-  enable.sh    # writes WindowSwitcher entries to COSMIC config
-  disable.sh   # removes them
-  status.sh    # prints current state
+  find-config.sh   # detects COSMIC shortcuts config path dynamically
+  enable.sh        # writes WindowSwitcher entries to COSMIC config
+  disable.sh       # removes them
+  status.sh        # prints current state
+install.sh     # standalone installer (downloads binary, no Rust needed)
+uninstall.sh   # standalone uninstaller
+.github/
+  workflows/
+    release.yml    # builds x86_64 + aarch64 binaries on tag push
 ```
+
+---
+
+## Releasing a new version
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+GitHub Actions will build binaries for x86_64 and aarch64 and publish a release automatically.
+
+---
+
+## Requirements
+
+- Pop!_OS with COSMIC desktop
+- x86_64 or aarch64 architecture
+
+Building from source additionally requires `libxkbcommon-dev` and Rust.
 
 ---
 

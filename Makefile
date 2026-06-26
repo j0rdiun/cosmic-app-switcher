@@ -1,20 +1,25 @@
-BINARY     := cosmic-app-switcher
+BINARY      := cosmic-app-switcher
 INSTALL_DIR := $(HOME)/.local/bin
-TARGET     := target/release/$(BINARY)
+TARGET      := target/release/$(BINARY)
 
-.PHONY: all build install uninstall enable disable status reinstall
+.PHONY: all build install uninstall enable disable status reinstall check-compat
 
 all: build
 
 build:
-	@command -v cargo >/dev/null 2>&1 || { echo "Rust not found. Install with: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"; exit 1; }
+	@command -v cargo >/dev/null 2>&1 || { \
+		echo "Rust not found. Install with:"; \
+		echo "  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"; \
+		exit 1; \
+	}
 	cargo build --release
 
 install: build
 	@mkdir -p $(INSTALL_DIR)
 	install -Dm755 $(TARGET) $(INSTALL_DIR)/$(BINARY)
 	@$(MAKE) enable
-	@echo "Installed and enabled. Press Super+Tab to test."
+	@echo ""
+	@echo "Installed and enabled. Press Super+Tab or Alt+Tab to try it."
 
 uninstall:
 	@$(MAKE) disable
@@ -31,3 +36,11 @@ status:
 	@bash scripts/status.sh
 
 reinstall: uninstall install
+
+# Check that the COSMIC environment is compatible with this tool
+check-compat:
+	@echo "Checking compatibility..."
+	@bash scripts/find-config.sh > /dev/null && echo "  COSMIC shortcuts config: found" || echo "  COSMIC shortcuts config: NOT found"
+	@test -f $(INSTALL_DIR)/$(BINARY) && echo "  Binary: installed" || echo "  Binary: not installed"
+	@command -v cosmic-comp >/dev/null 2>&1 && echo "  cosmic-comp: found" || echo "  cosmic-comp: not found (is COSMIC running?)"
+	@echo "Done."

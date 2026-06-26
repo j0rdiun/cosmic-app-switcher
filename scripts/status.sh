@@ -1,25 +1,35 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 BINARY="$HOME/.local/bin/cosmic-app-switcher"
-CONFIG="$HOME/.config/cosmic/com.system76.CosmicSettings.Shortcuts/v1/system_actions"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "cosmic-app-switcher status"
 echo "──────────────────────────"
 
+# Binary
 if [ -f "$BINARY" ]; then
     echo "Binary:    installed ($BINARY)"
 else
-    echo "Binary:    not installed"
+    echo "Binary:    NOT installed (run 'make install')"
 fi
 
-if [ -f "$CONFIG" ] && grep -q "cosmic-app-switcher" "$CONFIG"; then
-    echo "Shortcuts: enabled"
+# Shortcuts config
+CONFIG=$("$SCRIPT_DIR/find-config.sh" 2>/dev/null) || CONFIG=""
+if [ -z "$CONFIG" ]; then
+    echo "Config:    COSMIC shortcuts config not found"
 else
-    echo "Shortcuts: disabled (COSMIC default active)"
+    echo "Config:    $CONFIG"
+    if grep -q "cosmic-app-switcher" "$CONFIG" 2>/dev/null; then
+        echo "Shortcuts: enabled"
+    else
+        echo "Shortcuts: disabled"
+    fi
 fi
 
-if [ -f "target/release/cosmic-app-switcher" ]; then
+# Build
+if [ -f "$(dirname "$SCRIPT_DIR")/target/release/cosmic-app-switcher" ]; then
     echo "Build:     present (target/release/)"
 else
-    echo "Build:     not built yet"
+    echo "Build:     not built (run 'make build')"
 fi
