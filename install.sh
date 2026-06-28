@@ -8,7 +8,7 @@ set -euo pipefail
 REPO="j0rdiun/cosmic-app-switcher"
 INSTALL_DIR="$HOME/.local/bin"
 BINARY="cosmic-app-switcher"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-}")" && pwd)" || SCRIPT_DIR=""
 
 # ── Detect architecture ───────────────────────────────────────────────────────
 ARCH=$(uname -m)
