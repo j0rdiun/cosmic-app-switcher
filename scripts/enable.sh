@@ -26,13 +26,13 @@ case "$rc" in
         ;;
 esac
 
-if [ ! -f "$BINARY" ]; then
-    echo "Warning: binary not found at $BINARY — run 'make install' first to deploy the binary."
-fi
-
 if grep -q "cosmic-app-switcher" "$CONFIG"; then
     echo "Already enabled."
     exit 0
+fi
+
+if [ ! -f "$BINARY" ]; then
+    echo "Warning: binary not found at $BINARY — run 'make install' first to deploy the binary."
 fi
 
 TMPFILE=$(mktemp)

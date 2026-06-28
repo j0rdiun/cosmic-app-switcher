@@ -95,7 +95,6 @@ jobs:
       - name: Prepare release assets
         run: |
           chmod +x artifacts/cosmic-app-switcher-*
-          file artifacts/cosmic-app-switcher-*
           ls -lh artifacts/
 
       - name: Create GitHub Release
