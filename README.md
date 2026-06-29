@@ -1,8 +1,8 @@
-# cosmic-app-switcher
+# cosmic-ext-app-switcher
 
 A macOS-style horizontal app switcher for the [COSMIC desktop](https://system76.com/cosmic) on Pop!_OS — replacing the default vertical Super+Tab list with a compact icon strip centered on screen.
 
-![cosmic-app-switcher in action](docs/app-switcher.gif)
+![cosmic-ext-app-switcher in action](docs/app-switcher.gif)
 
 ---
 
@@ -11,7 +11,7 @@ A macOS-style horizontal app switcher for the [COSMIC desktop](https://system76.
 **One-line (no Rust required):**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/j0rdiun/cosmic-app-switcher/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/j0rdiun/cosmic-ext-app-switcher/main/install.sh | bash
 ```
 
 **Or build from source:**
@@ -21,8 +21,8 @@ curl -fsSL https://raw.githubusercontent.com/j0rdiun/cosmic-app-switcher/main/in
 sudo apt install libxkbcommon-dev
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && source ~/.cargo/env
 
-git clone https://github.com/j0rdiun/cosmic-app-switcher
-cd cosmic-app-switcher
+git clone https://github.com/j0rdiun/cosmic-ext-app-switcher
+cd cosmic-ext-app-switcher
 make install
 ```
 
@@ -33,7 +33,7 @@ Changes take effect immediately — no logout required.
 ## Uninstall
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/j0rdiun/cosmic-app-switcher/main/uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/j0rdiun/cosmic-ext-app-switcher/main/uninstall.sh | bash
 ```
 
 Or from the project directory:
